@@ -11,7 +11,7 @@ df = df %>%
 
 df2 = df2 %>% 
   mutate(date = as.Date(receivedAt)) %>% 
-  select(date, status, sourceAmount, sourceCurrency, destinationCurrency, exchangeRate, feesBRL, feesUSD)
+  select(date, status, sourceName, sourceAmount, sourceCurrency, destinationName, destinationCurrency, exchangeRate)
 
 add_exchange_rate = function(df, df_exchange){
   df$exchangeRate = NA
@@ -20,7 +20,10 @@ add_exchange_rate = function(df, df_exchange){
     pick_rate = df2 %>%
                filter(date <= df$date[i]) %>% 
                filter(date == max(date)) %>% 
-               select(exchangeRate)
+               select(exchangeRate) %>% 
+               .[[1]] %>% 
+               .[1]
+    
     df$exchangeRate[i] = pick_rate
   }
   df = df %>% mutate(exchangeRate = as.numeric(exchangeRate))
